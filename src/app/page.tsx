@@ -1,7 +1,7 @@
 export default function Home() {
   return (
-    <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
-      <p>FoundX</p>
-    </section>
+    <div className='h-[cal] bg-[url("/glass.jpg")]'>
+      <h1>Found X</h1>
+    </div>
   );
 }

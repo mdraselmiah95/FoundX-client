@@ -7,7 +7,6 @@ import {
   NavbarItem,
   NavbarMenuItem,
 } from "@heroui/navbar";
-import { Button } from "@heroui/button";
 import { Kbd } from "@heroui/kbd";
 import { Link } from "@heroui/link";
 import { Input } from "@heroui/input";
@@ -16,15 +15,9 @@ import NextLink from "next/link";
 import clsx from "clsx";
 
 import { siteConfig } from "@/src/config/site";
-import { ThemeSwitch } from "@/src/components/theme-switch";
-import {
-  TwitterIcon,
-  GithubIcon,
-  DiscordIcon,
-  HeartFilledIcon,
-  SearchIcon,
-  Logo,
-} from "@/src/components/icons";
+
+import { SearchIcon, Logo } from "@/src/components/icons";
+import { ThemeSwitch } from "./theme-switch";
 
 export const Navbar = () => {
   const searchInput = (
