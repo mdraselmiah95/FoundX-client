@@ -1,7 +1,9 @@
+import { Input } from "@heroui/input";
+
 export default function Home() {
   return (
-    <div className='h-[cal] bg-[url("/glass.jpg")]'>
-      <h1>Found X</h1>
+    <div className='h-[calc(100vh-64px)] bg-[url("/glass.jpg")] bg-cover bg-center'>
+      <Input />
     </div>
   );
 }
