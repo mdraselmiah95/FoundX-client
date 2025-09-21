@@ -1,53 +1,39 @@
+"use client";
+
 import {
-  Navbar as HeroUINavbar,
+  Navbar as NextUINavbar,
   NavbarContent,
   NavbarMenu,
   NavbarMenuToggle,
   NavbarBrand,
   NavbarItem,
   NavbarMenuItem,
-} from "@heroui/navbar";
-import { Kbd } from "@heroui/kbd";
-import { Link } from "@heroui/link";
-import { Input } from "@heroui/input";
-import { link as linkStyles } from "@heroui/theme";
+} from "@nextui-org/navbar";
+import { Link } from "@nextui-org/link";
+import { link as linkStyles } from "@nextui-org/theme";
 import NextLink from "next/link";
 import clsx from "clsx";
+import { Button } from "@nextui-org/button";
+import { useRouter } from "next/navigation";
+
+import NavbarDropdown from "./NavbarDropdown";
 
 import { siteConfig } from "@/src/config/site";
-
-import { SearchIcon, Logo } from "@/src/components/icons";
-import { ThemeSwitch } from "./theme-switch";
+import { ThemeSwitch } from "@/src/components/UI/theme-switch";
+import { useUser } from "@/src/context/user.provider";
+import { Logo } from "@/src/assets/icons";
 
 export const Navbar = () => {
-  const searchInput = (
-    <Input
-      aria-label="Search"
-      classNames={{
-        inputWrapper: "bg-default-100",
-        input: "text-sm",
-      }}
-      endContent={
-        <Kbd className="hidden lg:inline-block" keys={["command"]}>
-          K
-        </Kbd>
-      }
-      labelPlacement="outside"
-      placeholder="Search..."
-      startContent={
-        <SearchIcon className="flex-shrink-0 text-base pointer-events-none text-default-400" />
-      }
-      type="search"
-    />
-  );
+  const { user, isLoading } = useUser();
+  const router = useRouter();
 
   return (
-    <HeroUINavbar maxWidth="xl" position="sticky">
+    <NextUINavbar maxWidth="xl" position="sticky">
       <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
         <NavbarBrand as="li" className="gap-3 max-w-fit">
           <NextLink className="flex items-center justify-start gap-1" href="/">
             <Logo />
-            <p className="font-bold text-inherit">ACME</p>
+            <p className="font-bold text-inherit">FoundX</p>
           </NextLink>
         </NavbarBrand>
         <ul className="justify-start hidden gap-4 ml-2 lg:flex">
@@ -66,6 +52,24 @@ export const Navbar = () => {
             </NavbarItem>
           ))}
         </ul>
+      </NavbarContent>
+
+      <NavbarContent
+        className="hidden sm:flex basis-1/5 sm:basis-full"
+        justify="end"
+      >
+        <NavbarItem className="hidden gap-2 sm:flex">
+          <ThemeSwitch />
+        </NavbarItem>
+        {user?.email ? (
+          <NavbarItem className="hidden gap-2 sm:flex">
+            <NavbarDropdown />
+          </NavbarItem>
+        ) : (
+          <NavbarItem className="hidden gap-2 sm:flex">
+            <Button onClick={() => router.push("/login")}>Login</Button>
+          </NavbarItem>
+        )}
       </NavbarContent>
 
       <NavbarContent className="pl-4 sm:hidden basis-1" justify="end">
@@ -94,6 +98,6 @@ export const Navbar = () => {
           ))}
         </div>
       </NavbarMenu>
-    </HeroUINavbar>
+    </NextUINavbar>
   );
 };
