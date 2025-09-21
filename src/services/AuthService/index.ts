@@ -3,82 +3,73 @@
 import { cookies } from "next/headers";
 import { FieldValues } from "react-hook-form";
 import { jwtDecode } from "jwt-decode";
-
 import axiosInstance from "@/src/lib/AxiosInstance";
 
 export const registerUser = async (userData: FieldValues) => {
   try {
     const { data } = await axiosInstance.post("/auth/register", userData);
-
     if (data.success) {
-      cookies().set("accessToken", data?.data?.accessToken);
-      cookies().set("refreshToken", data?.data?.refreshToken);
+      const cookieStore = cookies();
+      cookieStore.set("accessToken", data.data.accessToken);
+      cookieStore.set("refreshToken", data.data.refreshToken);
     }
-
     return data;
-  } catch (error: any) {
-    throw new Error(error);
+  } catch (err) {
+    throw err instanceof Error ? err : new Error(String(err));
   }
 };
 
 export const loginUser = async (userData: FieldValues) => {
   try {
     const { data } = await axiosInstance.post("/auth/login", userData);
-
     if (data.success) {
-      cookies().set("accessToken", data?.data?.accessToken);
-      cookies().set("refreshToken", data?.data?.refreshToken);
+      const cookieStore = cookies();
+      cookieStore.set("accessToken", data.data.accessToken);
+      cookieStore.set("refreshToken", data.data.refreshToken);
     }
-
     return data;
-  } catch (error: any) {
-    throw new Error(error);
+  } catch (err) {
+    throw err instanceof Error ? err : new Error(String(err));
   }
 };
 
 export const logout = async () => {
-  cookies().delete("accessToken");
-  cookies().delete("refreshToken");
+  const cookieStore = cookies();
+  cookieStore.delete("accessToken");
+  cookieStore.delete("refreshToken");
 };
 
 export const getCurrentUser = async () => {
-  const cookieStore = await cookies(); // ✅ await here
+  const cookieStore = await cookies();
   const accessToken = cookieStore.get("accessToken")?.value;
 
-  let decodedToken = null;
+  if (!accessToken) return null;
 
-  if (accessToken) {
-    decodedToken = await jwtDecode(accessToken);
-
-    return {
-      _id: decodedToken._id,
-      name: decodedToken.name,
-      email: decodedToken.email,
-      mobileNumber: decodedToken.mobileNumber,
-      role: decodedToken.role,
-      status: decodedToken.status,
-      profilePhoto: decodedToken.profilePhoto,
-    };
-  }
-
-  return decodedToken;
+  const decoded = jwtDecode<any>(accessToken);
+  return {
+    _id: decoded._id,
+    name: decoded.name,
+    email: decoded.email,
+    mobileNumber: decoded.mobileNumber,
+    role: decoded.role,
+    status: decoded.status,
+    profilePhoto: decoded.profilePhoto,
+  };
 };
 
 export const getNewAccessToken = async () => {
   try {
-    const refreshToken = cookies().get("refreshToken")?.value;
-
-    const res = await axiosInstance({
-      url: "/auth/refresh-token",
-      method: "POST",
-      withCredentials: true,
-      headers: {
-        cookie: `refreshToken=${refreshToken}`,
-      },
-    });
-
+    const refreshToken = await cookies().get("refreshToken")?.value;
+    const res = await axiosInstance.post(
+      "/auth/refresh-token",
+      {},
+      {
+        withCredentials: true,
+        headers: { cookie: `refreshToken=${refreshToken}` },
+      }
+    );
     return res.data;
-  } catch (error) {
+  } catch {
     throw new Error("Failed to get new access token");
   }
 };
