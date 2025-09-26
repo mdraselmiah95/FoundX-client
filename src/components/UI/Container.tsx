@@ -1,6 +1,6 @@
 export default function Container({ children }: { children: React.ReactNode }) {
   return (
-    <div className="container flex-grow px-6 pt-16 mx-auto max-w-7xl">
+    <div className="container mx-auto max-w-7xl pt-16 px-6 flex-grow">
       {children}
     </div>
   );
